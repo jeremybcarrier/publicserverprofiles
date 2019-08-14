@@ -122,6 +122,7 @@
                 %X{ip} - client source IP
                 %X{app} - target application URL
                 %X{connectionid} - partner ID
+                %X{connectionname} - partner name
                 %X{virtualserverid} - virtual server ID
                 %X{protocol} - protocol (e.g. SAML20)
                 %X{host} - host
@@ -133,8 +134,8 @@
                 %X{sessiongroupid} - Internal ID for a group of persistent sessions associated with a single browser instance via the PF.PERSISTENT cookie. It is only set if the request has triggered session lookup.
                 %X{sri} - The session reference identifier (SRI) for the user, which can be passed to the session revocation API to revoke the user's sessions. It is only set if the request has triggered session lookup.
                 %X{pfversion} - PingFederate version
-                %X{adapterid} - adapter instance ID(s) that were invoked. You can also use authenticationsourceid (for SP connections) or targetsessionid (for IdP connections) to log adapters and connections that were invoked.
-                %X{authenticationsourceid} - This will be the IdP adapter ID(s) or the IdP connection partner entity ID(s) that were invoked in an authentication/logout flow. Multiple authentication sources will appear as an array, i.e. [idpadapter1, idpconn1]
+                %X{adapterid} - adapter instance ID(s) that were invoked. You can also use authenticationsourceid (for IdP connections/adapters) or targetsessionid (for SP connections/adapters) to log adapters and connections that were invoked.
+                %X{authenticationsourceid} - This will be the IdP adapter ID(s), the IdP connection partner entity ID(s) or the local identity profile ID(s) that were invoked in an authentication flow. Multiple authentication sources will appear as an array, i.e. [adapter.idpadapter1, idpConnection.idpconn1, localIdentity.localidentityprofile1]
                 %X{validatorid} - ID of the Password Credentials Validator used
                 %X{targetsessionid} - For IdP connections' browser SSO, this will be the SP adapter ID(s) or the SP connection partner entity ID(s) that were invoked in an authentication/logout flow. Multiple target sessions will appear as an array, i.e. [spadapter1, spconn1]
                 %X{description} - description of failure
@@ -157,6 +158,7 @@
 
                 %X{requeststarttime} - start time of the request (milliseconds since midnight, January 1, 1970 UTC).
                 %X{responsetime} - time to process the request, in milliseconds
+                %X{authnsessionexpiry} - authentication session expiry
                 
                 %header{a-header-name} - HTTP request header value for the given HTTP request header name
                 %parameter{parameter-name} - HTTP request parameter value for the given HTTP request parameter name
@@ -1183,9 +1185,16 @@
 
         <Logger name="org.apache.http.wire" level="INFO" />
         <Logger name="com.pingidentity.pf.email" level="INFO" />
+        <!--
+            Uncomment com.pingidentity.pf.datastore.other logger for logging request and responses from REST data stores
+            WARNING: This is intended for debugging purposes only. Sensitive information, such as passwords, may be
+            logged with this Logger.
+        -->
+        <!--
+        <Logger name="com.pingidentity.pf.datastore.other" level="TRACE" />
+        -->
         <Logger name="org.sourceid" level="DEBUG" />
-        <Logger name="org.sourceid.saml20.domain.mgmt.impl.DataDeployer" level="DEBUG" />
-        <Logger name="org.sourceid.saml20.util.SystemUtil" level="INFO" additivity="false">
+        <Logger name="org.sourceid.saml20.util.SystemUtil" level="DEBUG" additivity="false">
             <AppenderRef ref="CONSOLE" />
             <AppenderRef ref="FILE" />
         </Logger>
@@ -1212,13 +1221,21 @@
         <!--
         <Logger name="org.sourceid.websso.wrapper.OutMessageContext" level="TRACE" />
         -->
+        <!--
+            Uncomment PolicyTreeLogger logger for logging policy tree flows in detail.
+            WARNING: This is intended for debugging purposes only.
+        -->
+        <!--
+        <Logger name="org.sourceid.util.log.PolicyTreeLogger" level="DEBUG" />
+        -->
+
         <Logger name="com.jolbox" level="OFF" />
-        <Logger name="com.pingidentity.crypto.CertificateServiceImpl" level="INFO" />
+        <Logger name="com.pingidentity.crypto.CertificateServiceImpl" level="DEBUG" />
         <!-- Adjust the priority value to DEBUG to get additional logging to help troubleshoot XML Signature problems -->
-        <Logger name="org.sourceid.common.dsig" level="INFO" />
-        <Logger name="org.sourceid.saml20.domain.mgmt.impl.PluginSupport" level="INFO" />
-        <Logger name="com.pingidentity" level="INFO" />
-        <Logger name="com.pingidentity.common.util.ErrorHandler" level="INFO" additivity="false">
+        <Logger name="org.sourceid.common.dsig" level="DEBUG" />
+        <Logger name="org.sourceid.saml20.domain.mgmt.impl.PluginSupport" level="DEBUG" />
+        <Logger name="com.pingidentity" level="DEBUG" />
+        <Logger name="com.pingidentity.common.util.ErrorHandler" level="DEBUG" additivity="false">
             <AppenderRef ref="CONSOLE" />
             <AppenderRef ref="FILE" />
         </Logger>
@@ -1474,6 +1491,10 @@
 
         <Logger name="com.pingidentity.appserver.jetty.PingFederateInit" level="ERROR" additivity="false" includeLocation="false">
             <AppenderRef ref="CONSOLE" />
+        </Logger>
+
+        <Logger name="com.pingidentity.appserver.jetty.PingFederateInit" level="INFO" additivity="false" includeLocation="false">
+            <AppenderRef ref="FILE" />
         </Logger>
 
         <Logger name="org.pingidentity.RunPF" level="ERROR" additivity="false" includeLocation="false">
