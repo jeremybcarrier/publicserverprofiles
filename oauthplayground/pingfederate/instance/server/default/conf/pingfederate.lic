@@ -1,0 +1,13 @@
+ID=1356678
+Organization=68
+Product=PingFederate
+Version=9.3
+IssueDate=2019-08-12
+EnforcementType=2
+ExpirationDate=2020-12-31
+Tier=Free
+SaasProvisioning=true
+WSTrustSTS=true
+OAuth=true
+SignCode=FF07
+Signature=302D0215008CE30427E102087DAEA9261FBAF023574F2C969B021433F63FA98275B967C5EF042626E7B1610EA8F8E2
